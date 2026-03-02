@@ -362,13 +362,13 @@ A file called `Prompts.md` exists in the project root. It contains numbered prom
 - [x] Prompt 5 — Apply Packet generator (/jobs/[id]/packet/[appId])
 - [x] Prompt 6 — Daily Sprint page (/sprint)
 - [x] Prompt 7 — Application tracking + follow-up (/tracker)
-- [ ] Prompt 8 — KPI dashboard with time-series metrics
-- [ ] Prompt 9 — Outreach engine (contact store + message packs)
-- [ ] Prompt 10 — Speed polish (command palette, keyboard shortcuts, autosave)
-- [ ] Prompt 11 — Reliability pass + improved seed data + demo mode
-- [ ] Prompt 12 — Optional browser-assisted autofill
-- [ ] Prompt 13 — Ship checklist
-- [ ] Prompt 14 — GitHub, README, Vercel deploy
+- [x] Prompt 8 — KPI dashboard with time-series metrics
+- [x] Prompt 9 — Outreach engine (contact store + message packs)
+- [x] Prompt 10 — Speed polish (command palette, keyboard shortcuts, autosave)
+- [x] Prompt 11 — Reliability pass + improved seed data + demo mode
+- [x] Prompt 12 — Fill Assist panel with ATS detection (shipped as part of Prompt 10)
+- [x] Prompt 13 — Ship checklist
+- [x] Prompt 14 — GitHub, README, Vercel deploy
 
 ---
 
