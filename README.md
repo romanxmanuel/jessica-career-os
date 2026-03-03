@@ -1,43 +1,154 @@
 # Jessica Career OS
 
-A local-first job application intelligence dashboard. Designed to go from zero to applied in as few clicks as possible — with fit scoring, AI-assisted packet generation, and a daily workflow that eliminates decision fatigue.
+Your personal job search assistant. Built for **Jessica L. Herman, Accounts Receivable Specialist**.
 
-**Built for:** Jessica L. Herman, Accounts Receivable Specialist
-**Data stays on your computer.** Nothing is auto-submitted. Human approval required for every submission.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fromanxmanuel%2Fjessica-career-os&project-name=jessica-career-os&repository-name=jessica-career-os)
-
-> **Note:** The Vercel demo resets on each cold start (SQLite lives in `/tmp`). For real use, run locally — your data persists permanently.
+**Live demo:** [jessica-career-os.vercel.app](https://jessica-career-os.vercel.app)
 
 ---
 
-## Quick Start
+## How to Use It — Step by Step
+
+### Every morning, do this in order:
+
+---
+
+**Step 1 — Find today's job openings**
+
+Go to **Today's Hunt** in the left menu.
+
+Click the big **"Find Today's Jobs"** button.
+
+The app will automatically search for Accounts Receivable Specialist, Billing Specialist, and Collections jobs in Central Florida. It scores each one against your resume (0–100) and shows you why.
+
+---
+
+**Step 2 — Pick the best ones**
+
+For each job that looks good, click **"Queue for Today"**.
+
+For ones that don't look right, click **"Skip"**.
+
+You don't have to do them all — just pick your best 3–5.
+
+---
+
+**Step 3 — Build your apply packets**
+
+Click **"Generate All Packets"** on the Hunt page.
+
+This creates a cover letter, tailored resume bullets, and an outreach message for every job you queued. It takes about 30 seconds per job.
+
+---
+
+**Step 4 — Apply, one at a time**
+
+For each queued job, click **"Let's Apply →"**
+
+This opens a step-by-step guide called **Fill Assist**:
+
+1. Click **"Open Application"** — the job posting opens in a new tab
+2. Click **"Copy Cover Letter"** — paste it into the cover letter field
+3. Click **"Copy Resume Bullets"** — paste into the work history section
+4. When you're done submitting on their website, come back and click **"I've Submitted This Application"**
+
+That last click is the only way an application gets logged. The app never submits anything for you.
+
+---
+
+**Step 5 — Check your follow-ups**
+
+Go to **Today's To-Do** in the left menu.
+
+Any follow-up messages due today are listed here with the message already written. Copy and send.
+
+---
+
+### Adding a job you found yourself
+
+If you find a job on LinkedIn, Indeed, or anywhere else:
+
+1. Go to **Job List** → click **"Add a Job"**
+2. Paste the full job description into the text box
+3. Fill in the company name, job title, and the link to the posting
+4. Click **Save** — the app scores it instantly
+
+---
+
+### Checking your progress
+
+**My Overview** (the home page) shows your totals: how many you applied to, how many replied, and what's due today.
+
+**My Applications** shows a board of everything you've applied to, organized by stage (applied → interviewing → offer/rejected).
+
+**How I'm Doing** shows weekly charts of your application activity and which skills are appearing most in the jobs you're targeting.
+
+---
+
+## AI Cover Letters
+
+The app writes cover letters two ways:
+
+- **Template mode** — instant, no account needed, always works. Good quality.
+- **AI mode** — uses Claude AI to write more natural, personalized letters. Better quality, especially for follow-up paragraphs.
+
+To turn on AI mode, you need a free API key from one of these (pick one):
+
+| Option | Where to get it | Cost |
+|---|---|---|
+| **Anthropic (Claude)** — recommended | [console.anthropic.com](https://console.anthropic.com) | ~$0.01–0.03 per cover letter |
+| OpenRouter | [openrouter.ai](https://openrouter.ai) | Free credits to start |
+| OpenAI (ChatGPT) | [platform.openai.com](https://platform.openai.com) | ~$0.02 per cover letter |
+
+Once you have a key, tell your developer to add it to the app settings (it takes 2 minutes).
+
+---
+
+## Keyboard Shortcuts
+
+| Key | What it does |
+|---|---|
+| `⌘K` (Mac) or `Ctrl+K` (Windows) | Jump to any page instantly |
+| `n` | Add a new job (when you're not typing) |
+| `Escape` | Close any popup |
+
+---
+
+## Your Data
+
+- All your jobs, applications, and cover letters are saved in a **Turso cloud database** — they persist permanently across all sessions
+- Nothing is ever auto-submitted to employers — you always click the button yourself
+- Your resume and personal info never leave the database
+
+---
+
+## For Developers
+
+### Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Database | Turso (libsql) — cloud SQLite |
+| ORM | Drizzle ORM |
+| UI | Tailwind CSS + shadcn/ui |
+| AI (optional) | Anthropic Claude / OpenRouter / OpenAI |
+| Validation | Zod |
+| Language | TypeScript |
+
+### Local Development
 
 ```bash
-# Clone the repo
 git clone https://github.com/romanxmanuel/jessica-career-os.git
 cd jessica-career-os
-
-# Install dependencies
 npm install
-
-# Set up the database
-npm run db:migrate
-
-# Load demo data (Jessica's resume + sample AR jobs in Central FL)
-npm run db:seed
-
-# Start the app
-npm run dev
+npm run db:migrate    # creates local career.db
+npm run db:seed       # loads demo data
+npm run dev           # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+### Environment Variables
 
----
-
-## Environment Variables
-
-Copy `.env.example` to `.env.local` and fill in any keys you have:
+Copy `.env.example` to `.env.local`:
 
 ```bash
 cp .env.example .env.local
@@ -45,192 +156,65 @@ cp .env.example .env.local
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `RAPIDAPI_KEY` | Optional | Enables "Find Today's Jobs" button (JSearch API) |
-| `OPENROUTER_API_KEY` | Optional | AI-powered apply packets (recommended) |
-| `ANTHROPIC_API_KEY` | Optional | AI-powered apply packets (direct) |
-| `OPENAI_API_KEY` | Optional | AI-powered apply packets (GPT-4o) |
-| `DATABASE_URL` | Optional | Defaults to `./career.db` in project root |
+| `TURSO_DATABASE_URL` | Production | Turso cloud DB URL |
+| `TURSO_AUTH_TOKEN` | Production | Turso auth token |
+| `RAPIDAPI_KEY` | Optional | "Find Today's Jobs" button (JSearch API) |
+| `OPENROUTER_API_KEY` | Optional | AI cover letter generation |
+| `ANTHROPIC_API_KEY` | Optional | AI cover letter generation (direct) |
+| `OPENAI_API_KEY` | Optional | AI cover letter generation (GPT-4o) |
 
-You don't need any API keys to use the app. Template-based generation always works without keys.
-
----
-
-## Daily Workflow
-
-### Every morning:
-
-1. **Today's Hunt** (`/hunt`) — Click "Find Today's Jobs" to pull 20 AR Specialist openings in Central Florida, auto-scored against your resume.
-
-2. **Queue your top picks** — Click "Queue" on the best matches. Skip the rest.
-
-3. **Build All Packets** — One click generates cover letters, resume bullets, outreach messages, and screening Q&A for every queued job.
-
-4. **Apply one at a time** — Click "Let's Apply →" to open the Fill Assist panel. It guides you step-by-step: open the application, copy materials in order, paste into the form.
-
-5. **Mark as Submitted** — After you've submitted on the company's site, click "I've Submitted This Application." This is the only way it gets logged.
-
-6. **Send follow-ups** (`/sprint`) — Any follow-ups due today are surfaced here with pre-written messages ready to copy.
-
----
-
-## Adding Jobs Manually
-
-1. Go to **Job List** (`/jobs`) → click **Add a Job**
-2. Paste the job description into the text box
-3. Fill in company name, title, and URL
-4. Click **Save** — the app auto-scores it against your resume instantly
-
----
-
-## Where Your Data Lives
-
-- **Database file:** `career.db` in the project root
-- **Backup:** Just copy the file — `cp career.db career.db.backup`
-- **Reset to demo data:** Run `npm run db:seed` (⚠️ wipes all existing data)
+### Commands
 
 ```bash
-# Manual backup
-cp career.db "career-backup-$(date +%Y%m%d).db"
+npm run dev              # Start dev server (http://localhost:3000)
+npm run build            # Production build
+npm run db:migrate       # Run SQLite migrations (local only)
+npm run db:seed          # Seed local career.db with demo data
+npm run db:seed:remote   # Seed Turso cloud DB (needs TURSO_* env vars)
+npm run db:studio        # Open Drizzle Studio (visual DB browser)
 ```
 
----
-
-## Exporting Apply Packets
-
-From any packet page (`/jobs/[id]/packet/[appId]`):
-- Use the **Fill Assist** panel to copy materials one at a time
-- Or use the copy buttons on each section individually
-
-To export all packets as text (useful for weekly review):
-```bash
-# Export cover letters from the past 7 days:
-sqlite3 career.db "SELECT j.company, j.title, a.cover_letter FROM applications a JOIN jobs j ON a.job_id = j.id WHERE a.submitted_at > datetime('now', '-7 days');" > packets-this-week.txt
-```
-
----
-
-## Keyboard Shortcuts
-
-| Key | Action |
-|---|---|
-| `⌘K` or `Ctrl+K` | Open command palette (jump anywhere) |
-| `n` | New job (when not typing in a text field) |
-| `↑` / `↓` | Navigate command palette |
-| `Enter` | Select command palette item |
-| `Escape` | Close command palette |
-
----
-
-## Features
-
-- **Fit Scoring** — Deterministic, no AI. Every job scored 0–100 against your resume with plain-English explanations (✅ 6/8 skills match · ⚠️ Salary not listed)
-- **Apply Packet Generator** — Cover letter, tailored resume bullets, outreach message, screening Q&A. Template mode (instant) or AI mode (requires API key)
-- **Fill Assist** — Step-by-step copy guide with ATS detection (Workday, Greenhouse, Lever, iCIMS, Indeed, LinkedIn, Taleo)
-- **Human Approval Gate** — Applications can only be marked "submitted" after you manually click the button — no auto-submit ever
-- **Application Tracker** — Kanban view: Draft → Submitted → Interviewing → Offer / Rejected
-- **Follow-up Scheduler** — Auto-scheduled when you apply; pre-written messages ready on sprint page
-- **Outreach Engine** — Full outreach packs (recruiter + hiring manager + follow-up) with subject lines and contact manager
-- **KPI Dashboard** — Response rate, interview rate, weekly chart, keyword correlation, weekly action plan
-- **Command Palette** — `⌘K` to jump anywhere instantly
-- **Auto-save** — Packet editor saves your edits after 2 seconds
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router) |
-| Database | SQLite via `better-sqlite3` |
-| ORM | Drizzle ORM |
-| UI | Tailwind CSS + shadcn/ui components |
-| AI (optional) | Anthropic Claude / OpenRouter / OpenAI |
-| Validation | Zod |
-| Language | TypeScript |
-
----
-
-## Commands Reference
+### Seeding the Remote Database
 
 ```bash
-npm run dev          # Start development server (http://localhost:3000)
-npm run build        # Production build
-npm run db:migrate   # Run database migrations
-npm run db:seed      # Load demo data (⚠️ resets all data)
-npm run db:studio    # Open Drizzle Studio (visual DB browser)
-npm run test         # Run Vitest unit tests
+TURSO_DATABASE_URL=libsql://... \
+TURSO_AUTH_TOKEN=... \
+npm run db:seed:remote
 ```
 
----
-
-## Deploying to Vercel
-
-### Step 1 — Push to GitHub
-
-```bash
-git remote add origin https://github.com/romanxmanuel/jessica-career-os.git
-git push -u origin main
-```
-
-### Step 2 — Import in Vercel
-
-1. Go to [vercel.com](https://vercel.com) → **Add New Project**
-2. Import your `jessica-career-os` repository
-3. Framework: **Next.js** (auto-detected)
-4. Click **Deploy**
-
-### Step 3 — Add optional env vars
-
-In Vercel project settings → Environment Variables, add any keys you want:
-- `RAPIDAPI_KEY` — enables job discovery
-- `OPENROUTER_API_KEY` — enables AI packet generation
-
-> **How it works on Vercel:** On each cold start, the app creates a fresh SQLite database in `/tmp` and seeds it with demo data automatically. Data resets when the function goes cold. For persistent data, run locally.
-
-### One-click Deploy
-
-Click the button at the top of this README to deploy your own instance instantly.
-
----
-
-## Safety & Privacy
-
-- All data is stored locally in `career.db` — never uploaded anywhere
-- No telemetry, no tracking, no external calls (except optional AI API and JSearch API)
-- Applications are **never** auto-submitted — the human approval button is the only way
-- AI generation prompts explicitly forbid inventing experience or credentials not in your resume
-- `.env.local` is gitignored — your API keys never leave your machine
-- Personal PDF files are gitignored — never committed to the repo
-
----
-
-## Project Structure
+### Project Structure
 
 ```
 jessica-career-os/
-├── app/                    # Next.js pages + API routes
+├── app/
 │   ├── hunt/               # Today's Job Hunt (daily entry point)
 │   ├── jobs/               # Job list, intake, detail, packet editor
 │   ├── tracker/            # Kanban application tracker
-│   ├── sprint/             # Daily sprint + follow-ups
+│   ├── sprint/             # Daily To-Do + follow-ups
 │   ├── outreach/           # Outreach messages + contacts
 │   ├── resume/             # Resume profile manager
 │   ├── dashboard/          # KPI metrics + weekly review
 │   └── api/                # REST API routes
-├── components/             # Reusable UI components
+├── components/
 │   ├── sidebar.tsx         # Navigation
 │   └── command-palette.tsx # ⌘K command palette
 ├── lib/
-│   ├── db.ts               # Database connection singleton
+│   ├── db.ts               # Database connection (Turso / local SQLite)
 │   ├── scoring/            # Fit scoring engine (no AI)
 │   ├── generators/         # Template + AI packet generators
 │   ├── discovery/          # JSearch API client
 │   └── ai-client.ts        # Multi-provider AI client
 ├── db/
-│   ├── schema.ts           # Database table definitions
+│   ├── schema.ts           # Table definitions
 │   ├── migrations/         # Drizzle migration files
-│   ├── seed.ts             # Full demo data (npm run db:seed)
-│   └── demo-seed.ts        # Minimal seed for Vercel cold starts
-├── vercel.json             # Vercel deployment config
-└── career.db               # Your local SQLite database (gitignored)
+│   ├── seed.ts             # Local demo data seed
+│   └── seed-turso.ts       # Remote Turso seed script
+└── vercel.json             # Vercel deployment config
 ```
+
+### Safety
+
+- No auto-submit ever — `submittedAt` only set after human clicks the button
+- No fake experience — AI is explicitly told to only use facts from the resume
+- No telemetry — no external calls except optional AI API and JSearch API
+- API keys gitignored — never leave the machine

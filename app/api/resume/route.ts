@@ -18,7 +18,7 @@ const CreateResumeSchema = z.object({
 });
 
 export async function GET() {
-  const all = db.select().from(resumeProfiles).all();
+  const all = await db.select().from(resumeProfiles).all();
   return NextResponse.json(all);
 }
 
@@ -34,10 +34,10 @@ export async function POST(req: NextRequest) {
 
   // If setting as default, unset others
   if (parsed.data.isDefault) {
-    db.update(resumeProfiles).set({ isDefault: false }).run();
+    await db.update(resumeProfiles).set({ isDefault: false }).run();
   }
 
-  db.insert(resumeProfiles)
+  await db.insert(resumeProfiles)
     .values({
       id,
       label: parsed.data.label,
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     })
     .run();
 
-  const newResume = db
+  const newResume = await db
     .select()
     .from(resumeProfiles)
     .where(eq(resumeProfiles.id, id))

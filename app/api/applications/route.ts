@@ -13,7 +13,7 @@ const CreateApplicationSchema = z.object({
 });
 
 export async function GET() {
-  const all = db
+  const all = await db
     .select({
       id: applications.id,
       jobId: applications.jobId,
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   // Get default resume if none specified
   let resumeId = parsed.data.resumeId;
   if (!resumeId) {
-    const def = db
+    const def = await db
       .select()
       .from(resumeProfiles)
       .where(eq(resumeProfiles.isDefault, true))
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     resumeId = def?.id;
   }
 
-  db.insert(applications)
+  await db.insert(applications)
     .values({
       id,
       jobId: parsed.data.jobId,
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     .run();
 
   // Update job status to "applying"
-  db.update(jobs)
+  await db.update(jobs)
     .set({ status: "applying", updatedAt: now })
     .where(eq(jobs.id, parsed.data.jobId))
     .run();
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
   ];
 
   for (const fu of followUpTypes) {
-    db.insert(followUps)
+    await db.insert(followUps)
       .values({
         id: createId(),
         applicationId: id,
@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
       .run();
   }
 
-  const newApp = db
+  const newApp = await db
     .select()
     .from(applications)
     .where(eq(applications.id, id))

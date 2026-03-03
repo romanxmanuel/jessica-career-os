@@ -23,7 +23,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const job = db.select().from(jobs).where(eq(jobs.id, id)).get();
+  const job = await db.select().from(jobs).where(eq(jobs.id, id)).get();
   if (!job) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(job);
 }
@@ -43,8 +43,8 @@ export async function PATCH(
 
   // If rawJd changed, re-run fit scoring automatically
   if (parsed.data.rawJd) {
-    const existing = db.select().from(jobs).where(eq(jobs.id, id)).get();
-    const defaultResume = db
+    const existing = await db.select().from(jobs).where(eq(jobs.id, id)).get();
+    const defaultResume = await db
       .select()
       .from(resumeProfiles)
       .where(eq(resumeProfiles.isDefault, true))
@@ -77,9 +77,9 @@ export async function PATCH(
     }
   }
 
-  db.update(jobs).set(updatePayload).where(eq(jobs.id, id)).run();
+  await db.update(jobs).set(updatePayload).where(eq(jobs.id, id)).run();
 
-  const updated = db.select().from(jobs).where(eq(jobs.id, id)).get();
+  const updated = await db.select().from(jobs).where(eq(jobs.id, id)).get();
   return NextResponse.json(updated);
 }
 
@@ -88,6 +88,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  db.delete(jobs).where(eq(jobs.id, id)).run();
+  await db.delete(jobs).where(eq(jobs.id, id)).run();
   return NextResponse.json({ success: true });
 }

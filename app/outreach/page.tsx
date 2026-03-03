@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export default async function OutreachPage() {
   // Load all applications that have an outreach message OR are submitted/interviewing
-  const appsRaw = db
+  const appsRaw = (await db
     .select({
       appId: applications.id,
       jobId: applications.jobId,
@@ -24,7 +24,7 @@ export default async function OutreachPage() {
     })
     .from(applications)
     .leftJoin(jobs, eq(applications.jobId, jobs.id))
-    .all()
+    .all())
     .filter(
       (a) =>
         a.outreachMessage ||
@@ -47,7 +47,7 @@ export default async function OutreachPage() {
 
   // Load default resume for outreach pack generation
   const { resumeProfiles } = await import("@/db/schema");
-  const defaultResume = db
+  const defaultResume = await db
     .select()
     .from(resumeProfiles)
     .where(eq(resumeProfiles.isDefault, true))
@@ -56,7 +56,7 @@ export default async function OutreachPage() {
   // Load all contacts for the relevant job IDs
   const jobIds = appsRaw.map((a) => a.jobId).filter(Boolean) as string[];
   const allContacts = jobIds.length > 0
-    ? db.select().from(contacts).all().filter((c) => c.jobId && jobIds.includes(c.jobId))
+    ? (await db.select().from(contacts).all()).filter((c) => c.jobId && jobIds.includes(c.jobId))
     : [];
 
   const contactsByJobId: Record<string, typeof allContacts> = {};

@@ -23,8 +23,8 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 });
   }
 
-  db.update(contacts).set(parsed.data).where(eq(contacts.id, id)).run();
-  const updated = db.select().from(contacts).where(eq(contacts.id, id)).get();
+  await db.update(contacts).set(parsed.data).where(eq(contacts.id, id)).run();
+  const updated = await db.select().from(contacts).where(eq(contacts.id, id)).get();
   return NextResponse.json(updated);
 }
 
@@ -33,6 +33,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  db.delete(contacts).where(eq(contacts.id, id)).run();
+  await db.delete(contacts).where(eq(contacts.id, id)).run();
   return NextResponse.json({ success: true });
 }

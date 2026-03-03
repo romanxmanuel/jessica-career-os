@@ -46,9 +46,9 @@ function weekLabel(weekStart: Date) {
 
 // ── Data loading ──────────────────────────────────────────────────────────────
 async function getDashboardData() {
-  const allApps = db.select().from(applications).all();
-  const allJobs = db.select().from(jobs).all();
-  const allFollowUps = db.select().from(followUps).all();
+  const allApps = await db.select().from(applications).all();
+  const allJobs = await db.select().from(jobs).all();
+  const allFollowUps = await db.select().from(followUps).all();
 
   const now = new Date();
   const d7 = daysAgo(7);

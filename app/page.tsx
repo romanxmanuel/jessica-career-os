@@ -23,8 +23,8 @@ import { formatDate, relativeDate } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 async function getStats() {
-  const allApps = db.select().from(applications).all();
-  const allJobs = db.select().from(jobs).all();
+  const allApps = await db.select().from(applications).all();
+  const allJobs = await db.select().from(jobs).all();
 
   const submitted = allApps.filter((a) =>
     ["submitted", "interviewing", "offer", "rejected", "ghosted"].includes(
@@ -42,7 +42,7 @@ async function getStats() {
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
-  const dueFollowUps = db
+  const dueFollowUps = await db
     .select({
       id: followUps.id,
       type: followUps.type,
@@ -56,15 +56,15 @@ async function getStats() {
     .where(and(lte(followUps.dueDate, endOfDay), eq(followUps.status, "pending")))
     .all();
 
-  const topJobs = db
+  const topJobs = (await db
     .select()
     .from(jobs)
     .where(eq(jobs.status, "queued"))
-    .all()
+    .all())
     .sort((a, b) => (b.fitScore ?? 0) - (a.fitScore ?? 0))
     .slice(0, 3);
 
-  const recentApps = db
+  const recentApps = (await db
     .select({
       id: applications.id,
       status: applications.status,
@@ -74,7 +74,7 @@ async function getStats() {
     })
     .from(applications)
     .leftJoin(jobs, eq(applications.jobId, jobs.id))
-    .all()
+    .all())
     .sort((a, b) => (b.updatedAt?.getTime() ?? 0) - (a.updatedAt?.getTime() ?? 0))
     .slice(0, 4);
 

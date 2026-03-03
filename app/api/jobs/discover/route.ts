@@ -35,11 +35,11 @@ export async function POST(_req: NextRequest) {
   }
 
   // Get all existing job URLs from DB to deduplicate
-  const existingJobs = db.select({ url: jobs.url }).from(jobs).all();
+  const existingJobs = await db.select({ url: jobs.url }).from(jobs).all();
   const existingUrls = new Set(existingJobs.map((j) => j.url).filter(Boolean));
 
   // Load default resume for scoring
-  const defaultResume = db
+  const defaultResume = await db
     .select()
     .from(resumeProfiles)
     .where(eq(resumeProfiles.isDefault, true))
@@ -89,7 +89,7 @@ export async function POST(_req: NextRequest) {
 
     const id = createId();
 
-    db.insert(jobs)
+    await db.insert(jobs)
       .values({
         id,
         title: jJob.job_title,
@@ -120,7 +120,7 @@ export async function POST(_req: NextRequest) {
   const insertedIds = newJobs.map((j) => j.id);
   const insertedJobs =
     insertedIds.length > 0
-      ? db.select().from(jobs).where(inArray(jobs.id, insertedIds)).all()
+      ? await db.select().from(jobs).where(inArray(jobs.id, insertedIds)).all()
       : [];
 
   // Sort by fit score descending

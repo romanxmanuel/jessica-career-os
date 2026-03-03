@@ -29,7 +29,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const app = db
+  const app = await db
     .select()
     .from(applications)
     .where(eq(applications.id, id))
@@ -59,7 +59,7 @@ export async function PATCH(
 
   // Human approval gate: only this action can set submittedAt and status=submitted
   if (humanApprove === true) {
-    const app = db
+    const app = await db
       .select()
       .from(applications)
       .where(eq(applications.id, id))
@@ -83,15 +83,15 @@ export async function PATCH(
     updateData.status = "submitted";
 
     // Update job status to "applied"
-    db.update(jobs)
+    await db.update(jobs)
       .set({ status: "applied", updatedAt: now })
       .where(eq(jobs.id, app.jobId))
       .run();
   }
 
-  db.update(applications).set(updateData).where(eq(applications.id, id)).run();
+  await db.update(applications).set(updateData).where(eq(applications.id, id)).run();
 
-  const updated = db
+  const updated = await db
     .select()
     .from(applications)
     .where(eq(applications.id, id))

@@ -29,7 +29,7 @@ const BADGE_MAP: Record<string, "default" | "success" | "warning" | "info" | "da
 };
 
 export default async function TrackerPage() {
-  const allApps = db
+  const allApps = await db
     .select({
       id: applications.id,
       status: applications.status,

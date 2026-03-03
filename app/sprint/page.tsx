@@ -16,7 +16,7 @@ async function getTodayData() {
   const today = new Date().toISOString().split("T")[0];
 
   // Get or create today's sprint
-  let sprint = db
+  let sprint = await db
     .select()
     .from(dailySprints)
     .where(eq(dailySprints.date, today))
@@ -24,7 +24,7 @@ async function getTodayData() {
 
   if (!sprint) {
     const now = new Date();
-    db.insert(dailySprints)
+    await db.insert(dailySprints)
       .values({
         id: createId(),
         date: today,
@@ -33,18 +33,18 @@ async function getTodayData() {
         createdAt: now,
       })
       .run();
-    sprint = db
+    sprint = (await db
       .select()
       .from(dailySprints)
       .where(eq(dailySprints.date, today))
-      .get()!;
+      .get())!;
   }
 
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
   // Overdue + due today follow-ups
-  const dueFollowUps = db
+  const dueFollowUps = await db
     .select({
       id: followUps.id,
       type: followUps.type,
@@ -63,7 +63,7 @@ async function getTodayData() {
     .all();
 
   // Packets needing human review
-  const reviewQueue = db
+  const reviewQueue = await db
     .select({
       appId: applications.id,
       jobId: applications.jobId,
@@ -77,11 +77,11 @@ async function getTodayData() {
     .all();
 
   // Top queued jobs to apply to today
-  const queuedJobs = db
+  const queuedJobs = (await db
     .select()
     .from(jobs)
     .where(eq(jobs.status, "queued"))
-    .all()
+    .all())
     .sort((a, b) => (b.fitScore ?? 0) - (a.fitScore ?? 0))
     .slice(0, 5);
 
@@ -163,7 +163,7 @@ export default async function SprintPage() {
                       </p>
                       {fu.message && (
                         <p className="text-xs text-muted-foreground mt-1 line-clamp-2 italic">
-                          "{fu.message.slice(0, 100)}..."
+                          &quot;{fu.message.slice(0, 100)}...&quot;
                         </p>
                       )}
                     </div>

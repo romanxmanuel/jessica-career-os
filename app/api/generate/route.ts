@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 });
   }
 
-  const app = db
+  const app = await db
     .select()
     .from(applications)
     .where(eq(applications.id, parsed.data.applicationId))
@@ -28,18 +28,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Application not found" }, { status: 404 });
   }
 
-  const job = db.select().from(jobs).where(eq(jobs.id, app.jobId)).get();
+  const job = await db.select().from(jobs).where(eq(jobs.id, app.jobId)).get();
   if (!job) {
     return NextResponse.json({ error: "Job not found" }, { status: 404 });
   }
 
   const resume = app.resumeId
-    ? db
+    ? await db
         .select()
         .from(resumeProfiles)
         .where(eq(resumeProfiles.id, app.resumeId))
         .get()
-    : db
+    : await db
         .select()
         .from(resumeProfiles)
         .where(eq(resumeProfiles.isDefault, true))
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
 
   // Save generated content back to application
   const now = new Date();
-  db.update(applications)
+  await db.update(applications)
     .set({
       coverLetter: packet.coverLetter,
       tailoredResume: packet.tailoredResume,

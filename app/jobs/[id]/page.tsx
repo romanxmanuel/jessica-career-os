@@ -53,10 +53,10 @@ export default async function JobDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const job = db.select().from(jobs).where(eq(jobs.id, id)).get();
+  const job = await db.select().from(jobs).where(eq(jobs.id, id)).get();
   if (!job) notFound();
 
-  const existingApp = db
+  const existingApp = await db
     .select()
     .from(applications)
     .where(eq(applications.jobId, id))

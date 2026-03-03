@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
 
-    const due = db
+    const due = await db
       .select({
         id: followUps.id,
         applicationId: followUps.applicationId,
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(due.filter((f) => f.status === "pending"));
   }
 
-  const all = db
+  const all = await db
     .select({
       id: followUps.id,
       applicationId: followUps.applicationId,
@@ -65,7 +65,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 });
   }
 
-  db.update(followUps)
+  await db.update(followUps)
     .set({ status: parsed.data.status })
     .where(eq(followUps.id, parsed.data.id))
     .run();

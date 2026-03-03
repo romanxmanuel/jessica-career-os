@@ -10,18 +10,18 @@ export const dynamic = "force-dynamic";
 
 export default async function HuntPage() {
   // Load all queued jobs, sorted by fit score
-  const queuedJobs = db
+  const queuedJobs = (await db
     .select()
     .from(jobs)
     .where(eq(jobs.status, "queued"))
-    .all()
+    .all())
     .sort((a, b) => (b.fitScore ?? 0) - (a.fitScore ?? 0));
 
   // Load existing applications for queued jobs to know packet status
   const queuedIds = queuedJobs.map((j) => j.id);
   const existingApps =
     queuedIds.length > 0
-      ? db
+      ? await db
           .select()
           .from(applications)
           .where(inArray(applications.jobId, queuedIds))

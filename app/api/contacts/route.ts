@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
   const jobId = searchParams.get("jobId");
 
   const all = jobId
-    ? db.select().from(contacts).where(eq(contacts.jobId, jobId)).all()
-    : db.select().from(contacts).all();
+    ? await db.select().from(contacts).where(eq(contacts.jobId, jobId)).all()
+    : await db.select().from(contacts).all();
 
   return NextResponse.json(all);
 }
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   const now = new Date();
   const id = createId();
 
-  db.insert(contacts)
+  await db.insert(contacts)
     .values({
       id,
       jobId: parsed.data.jobId,
@@ -48,6 +48,6 @@ export async function POST(req: NextRequest) {
     })
     .run();
 
-  const created = db.select().from(contacts).where(eq(contacts.id, id)).get();
+  const created = await db.select().from(contacts).where(eq(contacts.id, id)).get();
   return NextResponse.json(created, { status: 201 });
 }

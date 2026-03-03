@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { applications, jobs, followUps } from "@/db/schema";
-import { eq, and, lte, gte } from "drizzle-orm";
+import { eq, and, lte } from "drizzle-orm";
 
 export async function GET() {
-  const allApps = db.select().from(applications).all();
-  const allJobs = db.select().from(jobs).all();
+  const allApps = await db.select().from(applications).all();
+  const allJobs = await db.select().from(jobs).all();
 
   const total = allApps.length;
   const submitted = allApps.filter((a) =>
@@ -28,7 +28,7 @@ export async function GET() {
   const endOfDay = new Date();
   endOfDay.setHours(23, 59, 59, 999);
 
-  const overdueFollowUps = db
+  const overdueFollowUps = await db
     .select()
     .from(followUps)
     .where(and(lte(followUps.dueDate, endOfDay), eq(followUps.status, "pending")))

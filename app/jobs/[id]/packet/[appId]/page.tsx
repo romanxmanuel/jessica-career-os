@@ -17,7 +17,7 @@ export default async function PacketPage({
   params: Promise<{ id: string; appId: string }>;
 }) {
   const { id, appId } = await params;
-  const app = db
+  const app = await db
     .select()
     .from(applications)
     .where(eq(applications.id, appId))
@@ -25,12 +25,12 @@ export default async function PacketPage({
 
   if (!app) notFound();
 
-  const job = db.select().from(jobs).where(eq(jobs.id, id)).get();
+  const job = await db.select().from(jobs).where(eq(jobs.id, id)).get();
   if (!job) notFound();
 
   const resume = app.resumeId
-    ? db.select().from(resumeProfiles).where(eq(resumeProfiles.id, app.resumeId)).get()
-    : db
+    ? await db.select().from(resumeProfiles).where(eq(resumeProfiles.id, app.resumeId)).get()
+    : await db
         .select()
         .from(resumeProfiles)
         .where(eq(resumeProfiles.isDefault, true))

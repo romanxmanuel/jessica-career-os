@@ -19,7 +19,7 @@ const STATUS_STYLE: Record<string, "default" | "success" | "warning" | "info" | 
 };
 
 export default async function JobsPage() {
-  const allJobs = db.select().from(jobs).orderBy(desc(jobs.fitScore)).all();
+  const allJobs = await db.select().from(jobs).orderBy(desc(jobs.fitScore)).all();
 
   const grouped = {
     queued: allJobs.filter((j) => j.status === "queued"),

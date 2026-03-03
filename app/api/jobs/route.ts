@@ -18,7 +18,7 @@ const CreateJobSchema = z.object({
 });
 
 export async function GET() {
-  const allJobs = db
+  const allJobs = await db
     .select()
     .from(jobs)
     .orderBy(desc(jobs.createdAt))
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   const id = createId();
 
   // Compute initial fit score using default resume
-  const defaultResume = db
+  const defaultResume = await db
     .select()
     .from(resumeProfiles)
     .where(eq(resumeProfiles.isDefault, true))
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     fitBreakdown = breakdown;
   }
 
-  db.insert(jobs)
+  await db.insert(jobs)
     .values({
       id,
       title: data.title,
@@ -91,6 +91,6 @@ export async function POST(req: NextRequest) {
     })
     .run();
 
-  const newJob = db.select().from(jobs).where(eq(jobs.id, id)).get();
+  const newJob = await db.select().from(jobs).where(eq(jobs.id, id)).get();
   return NextResponse.json(newJob, { status: 201 });
 }

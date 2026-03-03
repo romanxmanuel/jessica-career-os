@@ -9,7 +9,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function ResumePage() {
-  const profiles = db.select().from(resumeProfiles).all();
+  const profiles = await db.select().from(resumeProfiles).all();
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-5">
