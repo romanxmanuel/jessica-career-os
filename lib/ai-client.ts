@@ -72,20 +72,31 @@ export async function chatCompletion(options: CompletionOptions): Promise<string
   const { system, messages, maxTokens = 3000 } = options;
 
   if (provider === "anthropic") {
-    // Native Anthropic SDK
-    const Anthropic = (await import("@anthropic-ai/sdk")).default;
-    const client = new Anthropic({ apiKey });
-
-    const response = await client.messages.create({
-      model,
-      max_tokens: maxTokens,
-      system: system ?? undefined,
-      messages: messages
-        .filter((m) => m.role !== "system")
-        .map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+    // Use direct fetch (Anthropic Messages API) — avoids Node.js SDK issues in serverless
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: maxTokens,
+        system: system ?? undefined,
+        messages: messages
+          .filter((m) => m.role !== "system")
+          .map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+      }),
     });
 
-    return response.content[0].type === "text" ? response.content[0].text : "";
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`Anthropic API error: ${res.status} — ${err}`);
+    }
+
+    const data = await res.json();
+    return data.content?.[0]?.text ?? "";
   }
 
   // OpenAI-compatible API (covers OpenRouter and OpenAI directly)
