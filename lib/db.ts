@@ -3,15 +3,19 @@ import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "@/db/schema";
 import path from "path";
 
-// Local dev: reads from career.db file
-// Vercel / production: reads from Turso cloud DB (persistent)
 function getDb() {
-  // Use || not ?? so empty-string env vars fall through to the local file path
-  const url =
-    process.env.TURSO_DATABASE_URL ||
-    `file:${path.join(process.cwd(), process.env.DATABASE_URL || "career.db")}`;
+  // During `next build`, Next.js imports all route modules to analyse them
+  // but never actually calls any handlers. Use in-memory SQLite so the build
+  // doesn't make network calls to Turso (which would fail or be wasteful).
+  const isBuild = process.env.NEXT_PHASE === "phase-production-build";
 
-  const authToken = process.env.TURSO_AUTH_TOKEN || undefined;
+  const url = isBuild
+    ? "file::memory:"
+    : process.env.TURSO_DATABASE_URL ||
+      `file:${path.join(process.cwd(), process.env.DATABASE_URL || "career.db")}`;
+
+  const authToken = isBuild ? undefined : process.env.TURSO_AUTH_TOKEN || undefined;
+
   const client = createClient({ url, authToken });
   return drizzle(client, { schema });
 }
