@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
-// Allow AI generation calls up to 60 seconds (Pro plan) or 15s (Hobby)
-export const maxDuration = 60;
 import { applications, jobs, resumeProfiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { generatePacketTemplate } from "@/lib/generators/template";
 import { isAIAvailable } from "@/lib/ai-client";
+import { generatePacketAI } from "@/lib/generators/ai";
+
+// Allow AI generation calls up to 60 seconds (Pro plan) or 15s (Hobby)
+export const maxDuration = 60;
 
 const GenerateSchema = z.object({
   applicationId: z.string().min(1),
@@ -62,13 +63,15 @@ export async function POST(req: NextRequest) {
     screeningQa: string;
   };
 
-  if (parsed.data.mode === "ai" && isAIAvailable()) {
-    // AI generation via Claude
-    const { generatePacketAI } = await import("@/lib/generators/ai");
-    packet = await generatePacketAI({ job, resume });
-  } else {
-    // Deterministic template generation
-    packet = generatePacketTemplate({ job, resume });
+  try {
+    if (parsed.data.mode === "ai" && isAIAvailable()) {
+      packet = await generatePacketAI({ job, resume });
+    } else {
+      packet = generatePacketTemplate({ job, resume });
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Generation failed";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 
   // Save generated content back to application
