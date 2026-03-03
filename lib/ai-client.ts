@@ -91,6 +91,9 @@ export async function chatCompletion(options: CompletionOptions): Promise<string
     });
 
     if (!res.ok) {
+      if (res.status === 529) {
+        throw new Error("AI is temporarily busy. Please try again in a moment, or use template mode.");
+      }
       const err = await res.text();
       throw new Error(`Anthropic API error: ${res.status} — ${err}`);
     }
