@@ -39,16 +39,16 @@ const SENIORITY_RANK: Record<string, number> = {
   director: 5,
 };
 
-// Simple token overlap for title similarity
-function titleOverlap(a: string, b: string): number {
-  const tokA = new Set(a.toLowerCase().split(/\W+/).filter(Boolean));
-  const tokB = new Set(b.toLowerCase().split(/\W+/).filter(Boolean));
-  let overlap = 0;
-  for (const t of tokA) {
-    if (tokB.has(t)) overlap++;
-  }
-  const union = new Set([...tokA, ...tokB]).size;
-  return union === 0 ? 0 : overlap / union;
+// Title similarity: checks what fraction of job title words appear in the resume headline.
+// Using containment (not Jaccard) so that a detailed headline doesn't penalize a match.
+function titleOverlap(jobTitle: string, resumeHeadline: string): number {
+  const jobTokens = jobTitle.toLowerCase().split(/\W+/).filter(Boolean);
+  // Use just the first segment of the headline (before "|" or ",") for comparison
+  const headlineFirst = resumeHeadline.split(/[|,·]/)[0].toLowerCase();
+  const headlineTokens = new Set(headlineFirst.split(/\W+/).filter(Boolean));
+  if (jobTokens.length === 0) return 0;
+  const matched = jobTokens.filter((t) => headlineTokens.has(t)).length;
+  return matched / jobTokens.length;
 }
 
 export function computeFitScore(input: ScoringInput): FitBreakdown {
