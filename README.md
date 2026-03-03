@@ -5,7 +5,7 @@ A local-first job application intelligence dashboard. Designed to go from zero t
 **Built for:** Jessica L. Herman, Accounts Receivable Specialist
 **Data stays on your computer.** Nothing is auto-submitted. Human approval required for every submission.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYOUR_USERNAME%2Fjessica-career-os&project-name=jessica-career-os&repository-name=jessica-career-os)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fromanxmanuel%2Fjessica-career-os&project-name=jessica-career-os&repository-name=jessica-career-os)
 
 > **Note:** The Vercel demo resets on each cold start (SQLite lives in `/tmp`). For real use, run locally — your data persists permanently.
 
@@ -15,7 +15,7 @@ A local-first job application intelligence dashboard. Designed to go from zero t
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/jessica-career-os.git
+git clone https://github.com/romanxmanuel/jessica-career-os.git
 cd jessica-career-os
 
 # Install dependencies
@@ -168,7 +168,7 @@ npm run test         # Run Vitest unit tests
 ### Step 1 — Push to GitHub
 
 ```bash
-git remote add origin https://github.com/YOUR_USERNAME/jessica-career-os.git
+git remote add origin https://github.com/romanxmanuel/jessica-career-os.git
 git push -u origin main
 ```
 
