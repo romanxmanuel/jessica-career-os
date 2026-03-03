@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+
+// Allow AI generation calls up to 60 seconds (Pro plan) or 15s (Hobby)
+export const maxDuration = 60;
 import { applications, jobs, resumeProfiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";

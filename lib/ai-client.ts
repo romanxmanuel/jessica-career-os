@@ -25,7 +25,7 @@ export function detectProvider(): AIClientConfig | null {
     return {
       provider: "anthropic",
       apiKey: process.env.ANTHROPIC_API_KEY,
-      model: "claude-sonnet-4-6",
+      model: "claude-haiku-4-5-20251001",
     };
   }
 
